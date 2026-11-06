@@ -1,26 +1,11 @@
 {% extends 'base.html' %}
 {% block title %}Chatbot FAQ{% endblock %}
 {% block content %}
-<div class="page-head"><div><h1>Chatbot questions</h1>
-  <p>The chat button on the public site answers from this list. Use <code>{org}</code> for the company name and <code>{hr_email}</code> for the recruitment email address.</p></div></div>
-
-<div class="card" style="margin-bottom:1.1rem"><div class="card-head"><h2>Use this chatbot on your website and on WhatsApp</h2></div>
-  <p class="small">All channels answer from the questions below, so you only edit them in one place. Full steps: <code>infobip/SETUP.md</code>.</p>
-  <h3>1. Your website</h3>
-  <p class="small">Paste this line just before <code>&lt;/body&gt;</code> on any page. A chat button appears bottom-right.</p>
-  <pre class="small" style="white-space:pre-wrap;overflow-wrap:anywhere;background:#f4f6fb;padding:.6rem;border:1px solid #c9d6f5;border-radius:6px">&lt;script src="{{ base }}/static/embed.js" async&gt;&lt;/script&gt;</pre>
-  <h3>2. WhatsApp (through Infobip)</h3>
-  <p class="small">Infobip forwards each incoming WhatsApp message to this address (replace <code>YOUR_SECRET</code> with <code>INFOBIP_WEBHOOK_SECRET</code>):</p>
-  <pre class="small" style="white-space:pre-wrap;overflow-wrap:anywhere;background:#f4f6fb;padding:.6rem;border:1px solid #c9d6f5;border-radius:6px">{{ base }}/webhooks/infobip/whatsapp?secret=YOUR_SECRET</pre>
-  <p class="small">Webhook secret: <span class="badge {{ 'pass' if wa_on else 'neutral' }}">{{ 'set' if wa_on else 'not set' }}</span> ·
-     Sending replies through Infobip: <span class="badge {{ 'pass' if wa_send_on else 'neutral' }}">{{ 'set' if wa_send_on else 'not set' }}</span></p>
-  <h3>3. A chatbot built inside Infobip Answers</h3>
-  <p class="small">Its API element calls <code>{{ base }}/api/bot/message</code> with the header <code>X-API-Key</code>.
-     Key: <span class="badge {{ 'pass' if api_on else 'neutral' }}">{{ 'set' if api_on else 'not set' }}</span></p>
-  <p class="small muted">These values come from the <code>.env</code> file and are never shown here.</p></div>
-
-<div class="note warn" style="margin-bottom:1.1rem"><b>Please review every answer.</b> The answers that came with the portal are generic samples about the hiring process.
-  Replace them with {{ org_name }}'s real policies (salary, benefits, dress code, working hours, location) before you share the site publicly.</div>
+<div class="page-head">
+  <div>
+    <h1>Chatbot questions</h1>
+  </div>
+</div>
 
 {% if unanswered %}<div class="card" style="margin-bottom:1.1rem"><div class="card-head"><h2>Questions the chatbot could not answer</h2><span class="muted small">Most recent first</span></div>
   <ul class="clean">{% for u in unanswered %}<li>{{ u.question }} <span class="muted small">· {{ u.created_at|ts }}</span></li>{% endfor %}</ul>
