@@ -6,7 +6,7 @@ white / blue / black design.
 | Who | What they see | Password? |
 |---|---|---|
 | **Applicants** (public) | Application form with CV upload, a thank-you page, an FAQ chatbot | No |
-| **Recruiters** | Dashboard, scores and ranking, every application detail, shortlist-email button, interview notes + personal ranking, interns, chatbot editor, criteria, integrations, Excel download | **Yes - once per session** (default `0000`) |
+| **Recruiters** | Dashboard, scores and ranking, every application detail, shortlist-email button, interview notes + personal ranking, interns, chatbot editor, criteria, integrations, Excel download | **Yes - once per session** |
 | **Interns** (after being placed) | Their own private page: updates + recommended courses | Secret link only |
 
 Applicants are **never shown their score or decision** - only "application received".
