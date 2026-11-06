@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Example website with the chatbot</title></head>
+<body style="font-family: Arial, sans-serif; padding: 40px; max-width: 700px">
+  <h1>Your website</h1>
+  <p>This page shows where the chatbot line goes. Start the portal (<code>python -m flask --app app run</code>),
+     open this file in your browser, and click the chat button at the bottom right.</p>
+  <p>On your real website, change <code>http://127.0.0.1:5000</code> to your portal's public https address.</p>
+
+  <!-- THE LINE TO COPY: paste it just before the closing body tag of your pages -->
+  <script src="http://127.0.0.1:5000/static/embed.js" async></script>
+</body>
+</html>

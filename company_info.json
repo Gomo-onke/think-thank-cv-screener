@@ -1,0 +1,10 @@
+{
+  "_help": "Fill in what is true for your company. Anything left empty is simply left out of the chatbot (nothing is invented). After editing: delete recruitment.db to re-seed the FAQ, OR run  python infobip/make_infobip_files.py --sync-portal  to add the new answers to your existing database. The same text goes into the Infobip files.",
+  "about": "",
+  "services": "",
+  "location": "",
+  "hours": "",
+  "phone": "",
+  "email": "",
+  "website": ""
+}

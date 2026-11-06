@@ -1,0 +1,4 @@
+curl -X POST 'https://YOUR-PORTAL-ADDRESS/api/bot/message' \
+  -H 'Content-Type: application/json' \
+  -H 'X-API-Key: YOUR_BOT_API_KEY' \
+  -d '{"user_id":"{{userId}}","text":"{{userText}}"}'

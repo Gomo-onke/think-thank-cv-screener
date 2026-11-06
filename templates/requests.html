@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Chat requests{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>Chat requests</h1>
+  <p>Visitors who asked the chatbot (website or WhatsApp) to pass their question to a person. Reply to them by email, or on WhatsApp to the number shown, then mark the request as resolved.</p></div>
+  <div class="row"><a class="btn {{ 'primary' if show == 'open' }}" href="{{ url_for('requests_page') }}">Open ({{ open_count }})</a>
+    <a class="btn {{ 'primary' if show == 'all' }}" href="{{ url_for('requests_page', show='all') }}">All</a></div></div>
+{% if rows %}<div class="stack">{% for r in rows %}
+  <div class="card">
+    <div class="card-head"><h3>#{{ r.id }} · {{ r.name }}</h3>
+      <span class="badge {{ 'review' if r.status == 'Open' else 'pass' }}">{{ r.status }}</span></div>
+    <p class="small muted">{% if r.email %}<a href="mailto:{{ r.email }}">{{ r.email }}</a>{% else %}no email given{% endif %}
+      {% if r.channel == 'whatsapp' %}· <span class="badge info">WhatsApp</span> {{ r.contact }}
+      {% elif r.channel == 'api' %}· <span class="badge info">Chatbot</span>{% if r.contact %} {{ r.contact }}{% endif %}{% endif %}
+      · {{ r.created_at|ts }}</p>
+    <p style="white-space:pre-wrap">{{ r.message }}</p>
+    {% if r.status == 'Open' %}
+    <form method="post" action="{{ url_for('request_resolve', eid=r.id) }}" class="row" style="align-items:flex-end">
+      <div style="flex:1 1 260px"><label for="note{{ r.id }}">Note <span class="opt">(optional)</span></label>
+        <input id="note{{ r.id }}" name="note" type="text" maxlength="500" placeholder="e.g. Replied by email"></div>
+      <button class="btn good" type="submit">Mark as resolved</button></form>
+    {% else %}<p class="small muted">Resolved {{ r.resolved_at|ts }}{% if r.note %} · {{ r.note }}{% endif %}</p>{% endif %}
+  </div>{% endfor %}</div>
+{% else %}<div class="card empty">{{ 'No open requests.' if show == 'open' else 'No requests yet.' }}</div>{% endif %}
+{% endblock %}

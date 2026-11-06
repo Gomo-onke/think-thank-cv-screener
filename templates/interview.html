@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import rating_stars %}
+{% block title %}Interview · {{ c.name }}{% endblock %}
+{% macro rate(name, label) %}
+<div class="field"><label>{{ label }} <span class="req">*</span></label>
+  <div class="rating" role="radiogroup" aria-label="{{ label }}">
+    {% for n in range(1, 6) %}<label><input type="radio" name="{{ name }}" value="{{ n }}" {{ 'checked' if form.get(name) == n|string }} required><span>{{ n }}</span></label>{% endfor %}
+  </div></div>
+{% endmacro %}
+{% block content %}
+<p class="small"><a href="{{ url_for('candidate', cid=c.id) }}">← Back to {{ c.name }}</a></p>
+<div class="page-head">
+  <div><h1>Interview &amp; personal ranking</h1><p>{{ c.name }} · {{ c.position }}{% if latest %} · screening score {{ '%.1f'|format(latest.score) }}{% endif %}</p></div>
+  <div class="row"><span class="badge {{ c.stage|badge }}">{{ c.stage }}</span>
+    {% if c.interview_when or c.meet_link %}<span class="muted small">Scheduled: {{ c.interview_when or 'time TBC' }}</span>{% endif %}</div>
+</div>
+
+<div class="split">
+  <div class="stack">
+    <form class="card" method="post" action="{{ url_for('interview', cid=c.id) }}">
+      <h2>Discuss the interview</h2>
+      <div class="grid g2">
+        <div class="field"><label for="interviewer">Your name <span class="req">*</span></label>
+          <input id="interviewer" name="interviewer" type="text" maxlength="100" value="{{ form.get('interviewer', '') }}" required></div>
+        <div class="field"><label for="interview_date">Interview date</label>
+          <input id="interview_date" name="interview_date" type="date" value="{{ form.get('interview_date', today) }}"></div>
+      </div>
+      {{ rate('skills_rating', 'Skills and experience (1 = weak, 5 = excellent)') }}
+      {{ rate('communication_rating', 'Communication') }}
+      {{ rate('culture_rating', 'Culture fit') }}
+      {{ rate('overall_rating', 'Your overall ranking of this candidate') }}
+      <div class="field"><label>Is this the right person for the job? <span class="req">*</span></label>
+        <div class="choice">{% for v in ['Yes', 'Maybe', 'No'] %}<label><input type="radio" name="recommendation" value="{{ v }}" {{ 'checked' if form.get('recommendation') == v }} required><span>{{ v }}</span></label>{% endfor %}</div></div>
+      <div class="field"><label for="notes">Discussion notes</label>
+        <textarea id="notes" name="notes" rows="8" maxlength="4000" placeholder="Strengths, concerns, answers that stood out, questions to follow up…">{{ form.get('notes', '') }}</textarea></div>
+      <button class="btn primary" type="submit">Save interview &amp; ranking</button>
+    </form>
+
+    <div class="card">
+      <h2>Notes from every interviewer</h2>
+      {% if interviews %}<ul class="clean">{% for i in interviews %}
+        <li><b>{{ i.interviewer }}</b> <span class="muted small">· {{ i.interview_date or (i.created_at|day) }}</span>
+          <span class="badge {{ i.recommendation|badge }}" style="float:right">Right person? {{ i.recommendation }}</span>
+          <div class="small">Skills {{ i.skills_rating }} · Communication {{ i.communication_rating }} · Culture {{ i.culture_rating }} · <b>Overall {{ i.overall_rating }}/5</b></div>
+          {% if i.notes %}<div style="white-space:pre-wrap;margin:.3rem 0">{{ i.notes }}</div>{% endif %}
+          <form class="inline" method="post" action="{{ url_for('interview_delete', iid=i.id) }}" data-confirm="Delete this interview entry?">
+            <input type="hidden" name="next" value="{{ url_for('interview', cid=c.id) }}"><button class="btn danger sm" type="submit">Delete</button></form></li>{% endfor %}</ul>
+      {% else %}<p class="muted">Nothing recorded yet.</p>{% endif %}
+    </div>
+  </div>
+
+  <aside class="stack">
+    <div class="card blue">
+      <h2>Final decision</h2>
+      <p class="small">Saving an interview moves the candidate to <b>Interviewed</b>. When the team has agreed, record the outcome:</p>
+      <form method="post" action="{{ url_for('stage', cid=c.id) }}" class="row">
+        <input type="hidden" name="next" value="{{ url_for('interview', cid=c.id) }}">
+        <button class="btn good" name="stage" value="Selected" type="submit" data-confirm="Mark {{ c.name }} as Selected?">Select candidate</button>
+        <button class="btn danger" name="stage" value="Not selected" type="submit" data-confirm="Mark {{ c.name }} as Not selected?">Not selected</button>
+      </form>
+      {% if c.position == intern_position and c.stage == 'Selected' %}<p style="margin-top:.8rem">
+        {% if intern %}<a class="btn sm" href="{{ url_for('intern_detail', iid=intern.id) }}">Open intern page</a>{% else %}<a class="btn primary sm" href="{{ url_for('interns') }}">Place in a department →</a>{% endif %}</p>{% endif %}
+    </div>
+    <div class="card">
+      <h2>Rating summary</h2>
+      {% if interviews %}
+        {% set n = interviews|length %}
+        <p>Average overall ranking: {{ rating_stars((interviews|sum(attribute='overall_rating') / n)|round(1)) }}</p>
+        <p class="small">Right person? Yes {{ interviews|selectattr('recommendation', 'equalto', 'Yes')|list|length }} ·
+          Maybe {{ interviews|selectattr('recommendation', 'equalto', 'Maybe')|list|length }} ·
+          No {{ interviews|selectattr('recommendation', 'equalto', 'No')|list|length }}</p>
+      {% else %}<p class="muted">No ratings yet.</p>{% endif %}
+    </div>
+  </aside>
+</div>
+{% endblock %}

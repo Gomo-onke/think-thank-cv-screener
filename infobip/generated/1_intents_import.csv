@@ -1,0 +1,177 @@
+Hi;Welcome
+Hello;Welcome
+Hey;Welcome
+Good morning;Welcome
+Good afternoon;Welcome
+Good evening;Welcome
+Howzit;Welcome
+Hello there;Welcome
+Hi there;Welcome
+Hey there;Welcome
+Start;Welcome
+Hallo;Welcome
+Bye;Goodbye
+Goodbye;Goodbye
+See you later;Goodbye
+That is all;Goodbye
+I am done;Goodbye
+No thanks that is all;Goodbye
+Bye bye;Goodbye
+Talk to you later;Goodbye
+Have a good day;Goodbye
+Thanks;Thanks
+Thank you;Thanks
+Thanks a lot;Thanks
+Many thanks;Thanks
+Cheers;Thanks
+Great thanks;Thanks
+Awesome thank you;Thanks
+Thank you so much;Thanks
+Thanks for your help;Thanks
+I want to talk to a person;Human_Agent
+Can I speak to a human;Human_Agent
+Connect me to an agent;Human_Agent
+I need a real person;Human_Agent
+Speak to a recruiter;Human_Agent
+Talk to someone;Human_Agent
+Can someone call me;Human_Agent
+I want to speak to the recruitment team;Human_Agent
+Live agent please;Human_Agent
+Get me a human;Human_Agent
+How will I know my application was received;Application_Received
+Did you get my application;Application_Received
+Did my application go through;Application_Received
+Will I get a confirmation email;Application_Received
+I applied but got no confirmation;Application_Received
+How do I know you received my CV;Application_Received
+Was my application submitted successfully;Application_Received
+Do I get an email after applying;Application_Received
+Where is my confirmation;Application_Received
+Has my application been received;Application_Received
+How long does the hiring process take;Hiring_Timeline
+How long until I hear back;Hiring_Timeline
+How long will it take to get a response;Hiring_Timeline
+When will I hear from you;Hiring_Timeline
+What is the timeline for hiring;Hiring_Timeline
+How many days until a decision;Hiring_Timeline
+How long do I have to wait for feedback;Hiring_Timeline
+What if I do not hear back;Hiring_Timeline
+How soon will you reply;Hiring_Timeline
+When will I know if I was successful;Hiring_Timeline
+What happens if I am shortlisted;Shortlisted_Next_Steps
+What is the next step after shortlisting;Shortlisted_Next_Steps
+I was shortlisted what now;Shortlisted_Next_Steps
+How will you invite me to an interview;Shortlisted_Next_Steps
+What happens after I pass the screening;Shortlisted_Next_Steps
+How will I be told about an interview;Shortlisted_Next_Steps
+When will the interview happen after shortlisting;Shortlisted_Next_Steps
+What do you do after you shortlist someone;Shortlisted_Next_Steps
+How do I prepare for the interview;Interview_Preparation
+Tips for the Google Meet interview;Interview_Preparation
+How does the video interview work;Interview_Preparation
+What should I do before the interview;Interview_Preparation
+How should I prepare for the Google Meet call;Interview_Preparation
+What do I need for the online interview;Interview_Preparation
+Any interview tips;Interview_Preparation
+Is the interview online;Interview_Preparation
+Do I need a camera for the interview;Interview_Preparation
+What documents will I need if I am offered the job;Offer_Documents
+Which documents do I need to bring;Offer_Documents
+What paperwork do I need for onboarding;Offer_Documents
+Do I need to send my ID;Offer_Documents
+What do I need to give you if I get the job;Offer_Documents
+Which certificates do I have to provide;Offer_Documents
+What is needed after an offer;Offer_Documents
+Do you need references;Offer_Documents
+What are the working hours;Working_Hours
+What time do I start work;Working_Hours
+What time do you finish work;Working_Hours
+How many hours do I work per week;Working_Hours
+Do you work shifts;Working_Hours
+What is the work schedule;Working_Hours
+When does the working day start;Working_Hours
+What hours will I work;Working_Hours
+Can I work remotely;Remote_Work
+Is remote work possible;Remote_Work
+Do you offer hybrid work;Remote_Work
+Can I work from home;Remote_Work
+Is the job on site or remote;Remote_Work
+Do I have to work in the office;Remote_Work
+Is work from home allowed;Remote_Work
+Do you have hybrid arrangements;Remote_Work
+How and when will I be paid;Salary_And_Pay
+What is the salary;Salary_And_Pay
+When is payday;Salary_And_Pay
+How much do you pay;Salary_And_Pay
+What is the stipend for interns;Salary_And_Pay
+When do I get my salary;Salary_And_Pay
+Do you pay interns;Salary_And_Pay
+How is payment done;Salary_And_Pay
+What is the pay date;Salary_And_Pay
+What equipment will I get;Equipment
+Will I get a laptop;Equipment
+Do you provide a computer;Equipment
+Which software will I use;Equipment
+What tools will be provided;Equipment
+Do I need to bring my own laptop;Equipment
+What devices do I receive;Equipment
+Will you supply equipment;Equipment
+What is the first week like;First_Week
+What happens on my first day;First_Week
+How does onboarding work;First_Week
+What is the induction like;First_Week
+Who will I meet in my first week;First_Week
+What will I do when I start;First_Week
+Tell me about orientation;First_Week
+What should I expect on day one;First_Week
+What is the probation period;Probation_And_Leave
+How much leave do I get;Probation_And_Leave
+How many days of annual leave;Probation_And_Leave
+Do you offer sick leave;Probation_And_Leave
+What benefits do employees get;Probation_And_Leave
+How long is probation;Probation_And_Leave
+What holiday do I get;Probation_And_Leave
+Tell me about leave and benefits;Probation_And_Leave
+What departments can interns work in;Intern_Departments
+Which departments do you have for interns;Intern_Departments
+Where can I be placed as an intern;Intern_Departments
+Which teams take interns;Intern_Departments
+What internship areas are available;Intern_Departments
+Can I choose my department as an intern;Intern_Departments
+List the intern departments;Intern_Departments
+Do you have internships in design;Intern_Departments
+How will interns get updates;Intern_Updates_Courses
+What courses are recommended for interns;Intern_Updates_Courses
+How do interns get course recommendations;Intern_Updates_Courses
+Where do I see my intern updates;Intern_Updates_Courses
+What learning support do interns get;Intern_Updates_Courses
+How will I know which courses to take;Intern_Updates_Courses
+Do interns get a personal page;Intern_Updates_Courses
+What is the intern link;Intern_Updates_Courses
+Who can I contact with other questions;Contact_Hr
+How can I contact HR;Contact_Hr
+What is the recruitment email;Contact_Hr
+Who do I email about my application;Contact_Hr
+Where can I send a question;Contact_Hr
+How do I reach the recruitment team;Contact_Hr
+What is the HR contact;Contact_Hr
+I have another question who do I ask;Contact_Hr
+What positions are open;Open_Positions
+What jobs do you have;Open_Positions
+Which vacancies are available;Open_Positions
+Are you hiring;Open_Positions
+What roles can I apply for;Open_Positions
+List your open positions;Open_Positions
+Do you have any vacancies;Open_Positions
+What careers are available;Open_Positions
+Which jobs are you recruiting for;Open_Positions
+How do I apply;How_To_Apply
+How can I submit my CV;How_To_Apply
+Where do I send my application;How_To_Apply
+How do I apply for a job;How_To_Apply
+What is the application process;How_To_Apply
+Can I upload my CV;How_To_Apply
+How do I submit an application;How_To_Apply
+Where is the application form;How_To_Apply
+What file types can I upload for my CV;How_To_Apply
+How do I apply for an internship;How_To_Apply

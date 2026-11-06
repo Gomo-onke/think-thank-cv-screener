@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import score_bar, rating_stars, shortlist_button %}
+{% block title %}Candidates{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><h1>Candidate ranking</h1><p>{{ rows|length }} candidate{{ '' if rows|length == 1 else 's' }} shown · Pass {{ counts.get('Pass', 0) }} · Needs Review {{ counts.get('Needs Review', 0) }} · Reject {{ counts.get('Reject', 0) }}</p></div>
+  <a class="btn" href="{{ url_for('export_xlsx') }}">Download Excel report</a>
+</div>
+
+<form class="card row" method="get" style="margin-bottom:1.1rem; align-items:flex-end">
+  <div style="flex:2 1 200px"><label for="q">Search</label><input id="q" name="q" type="search" value="{{ f.q }}" placeholder="Name or email"></div>
+  <div style="flex:1 1 150px"><label for="position">Position</label><select id="position" name="position"><option value="">All</option>
+    {% for p in positions %}<option {{ 'selected' if p.name == f.position }}>{{ p.name }}</option>{% endfor %}</select></div>
+  <div style="flex:1 1 140px"><label for="status">Auto decision</label><select id="status" name="status"><option value="">All</option>
+    {% for s in ['Pass', 'Needs Review', 'Reject'] %}<option {{ 'selected' if s == f.status }}>{{ s }}</option>{% endfor %}</select></div>
+  <div style="flex:1 1 150px"><label for="stage">Stage</label><select id="stage" name="stage"><option value="">All</option>
+    {% for s in stages %}<option {{ 'selected' if s == f.stage }}>{{ s }}</option>{% endfor %}</select></div>
+  <div style="flex:1 1 150px"><label for="sort">Sort by</label><select id="sort" name="sort">
+    <option value="score" {{ 'selected' if f.sort == 'score' }}>Screening score</option>
+    <option value="rating" {{ 'selected' if f.sort == 'rating' }}>Recruiter ranking</option>
+    <option value="recent" {{ 'selected' if f.sort == 'recent' }}>Newest</option></select></div>
+  <div class="row"><button class="btn primary" type="submit">Filter</button><a class="btn" href="{{ url_for('candidates') }}">Reset</a></div>
+</form>
+
+{% if rows %}
+<div class="table-wrap"><table>
+  <thead><tr><th class="num">#</th><th>Candidate</th><th>Position</th><th>Score</th><th>Auto decision</th><th>Stage</th><th>Recruiter rating</th><th>Applied</th><th>Actions</th></tr></thead>
+  <tbody>{% for r in rows %}<tr>
+    <td class="num">{{ loop.index }}</td>
+    <td><a class="name" href="{{ url_for('candidate', cid=r.candidate_id) }}">{{ r.name }}</a><div class="small muted">{{ r.email }}</div></td>
+    <td>{{ r.position }}{% if r.preferred_department %}<div class="small muted">{{ r.preferred_department }}</div>{% endif %}</td>
+    <td>{{ score_bar(r.score) }}</td>
+    <td><span class="badge {{ r.status|badge }}">{{ r.status }}</span></td>
+    <td><span class="badge {{ r.stage|badge }}">{{ r.stage }}</span></td>
+    <td>{{ rating_stars(r.avg_rating) }}{% if r.interview_count %}<div class="small muted">{{ r.interview_count }} interview{{ '' if r.interview_count == 1 else 's' }}</div>{% endif %}</td>
+    <td class="nowrap small">{{ r.applied_at|day }}</td>
+    <td><div class="row">
+      <a class="btn sm" href="{{ url_for('candidate', cid=r.candidate_id) }}">View</a>
+      {% if r.can_shortlist %}{{ shortlist_button(r, request.full_path.rstrip('?')) }}{% endif %}
+    </div></td></tr>{% endfor %}</tbody>
+</table></div>
+{% else %}<div class="card empty">No candidates match these filters.</div>{% endif %}
+{% endblock %}

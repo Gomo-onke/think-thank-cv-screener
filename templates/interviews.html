@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import score_bar, rating_stars, shortlist_button %}
+{% block title %}Interviews{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><h1>Interview board</h1><p>Candidates who have been shortlisted or interviewed, ranked by the recruiters' own ratings.</p></div>
+  <form method="get" class="row" style="align-items:flex-end"><div><label for="position">Position</label><select id="position" name="position" onchange="this.form.submit()">
+    <option value="">All positions</option>{% for p in positions %}<option {{ 'selected' if p.name == sel_position }}>{{ p.name }}</option>{% endfor %}</select></div>
+    <noscript><button class="btn" type="submit">Filter</button></noscript></form>
+</div>
+{% if rows %}
+<div class="table-wrap"><table>
+  <thead><tr><th class="num">#</th><th>Candidate</th><th>Position</th><th>Stage</th><th>Interview</th><th>Recruiter rating</th><th>Right person?</th><th>Screening</th><th>Actions</th></tr></thead>
+  <tbody>{% for r in rows %}<tr>
+    <td class="num">{{ loop.index }}</td>
+    <td><a class="name" href="{{ url_for('candidate', cid=r.candidate_id) }}">{{ r.name }}</a></td>
+    <td>{{ r.position }}</td>
+    <td><span class="badge {{ r.stage|badge }}">{{ r.stage }}</span></td>
+    <td class="small">{% if r.interview_count %}{{ r.interview_count }} recorded{% elif r.shortlist_email_sent_at %}Invited {{ r.shortlist_email_sent_at|day }}{% else %}Not yet{% endif %}</td>
+    <td>{{ rating_stars(r.avg_rating) }}</td>
+    <td class="small">{% if r.interview_count %}<span class="badge pass">{{ r.rec_yes }} yes</span> <span class="badge review">{{ r.rec_maybe }} maybe</span> <span class="badge reject">{{ r.rec_no }} no</span>{% else %}-{% endif %}</td>
+    <td>{{ score_bar(r.score) }}</td>
+    <td><div class="row"><a class="btn primary sm" href="{{ url_for('interview', cid=r.candidate_id) }}">Interview</a>
+      {% if r.can_shortlist and not r.shortlist_email_sent_at %}{{ shortlist_button(r, request.full_path.rstrip('?')) }}{% endif %}</div></td>
+  </tr>{% endfor %}</tbody></table></div>
+{% else %}<div class="card empty">Nobody has been shortlisted or interviewed yet. Send a shortlist email from the <a href="{{ url_for('candidates') }}">candidates page</a>.</div>{% endif %}
+{% endblock %}

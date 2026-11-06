@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% macro position_form(p, is_new=false) %}
+<form class="card {{ 'blue' if is_new }}" method="post" action="{{ url_for('criteria_position') }}">
+  <input type="hidden" name="original_name" value="{{ '' if is_new else p.name }}">
+  <h3>{{ 'Add a position' if is_new else p.name }}</h3>
+  <div class="grid g3">
+    <div class="field"><label>Position name</label><input name="name" type="text" maxlength="100" value="{{ '' if is_new else p.name }}" required></div>
+    <div class="field"><label>Minimum years of experience</label><input name="min_years" type="number" min="0" step="0.5" value="{{ 0 if is_new else p.min_years }}" required></div>
+    <div class="field"><label>Minimum education</label><select name="min_education">{% for e in edu_choices %}<option {{ 'selected' if (not is_new and p.min_education == e) }}>{{ e }}</option>{% endfor %}</select></div>
+  </div>
+  <div class="grid g2">
+    <div class="field"><label>Required keywords <span class="opt">(comma separated)</span></label><textarea name="required_keywords" rows="2">{{ '' if is_new else p.required_keywords }}</textarea></div>
+    <div class="field"><label>Preferred keywords</label><textarea name="preferred_keywords" rows="2">{{ '' if is_new else p.preferred_keywords }}</textarea></div>
+  </div>
+  <div class="grid g4">
+    {% for key, label in [('w_exp', 'Experience weight'), ('w_edu', 'Education weight'), ('w_req', 'Required keywords weight'), ('w_pref', 'Preferred keywords weight')] %}
+    <div class="field"><label>{{ label }}</label><input name="{{ key }}" type="number" min="0" step="0.05" value="{{ 0.25 if is_new else p[key] }}" required></div>{% endfor %}
+  </div>
+  <div class="row"><button class="btn primary sm" type="submit">{{ 'Add position' if is_new else 'Save' }}</button>
+    {% if not is_new %}<button class="btn danger sm" type="submit" formaction="{{ url_for('criteria_position_delete') }}" name="name" value="{{ p.name }}" formnovalidate onclick="return confirm('Delete {{ p.name|e }}? Existing candidates keep their results.')">Delete</button>{% endif %}</div>
+</form>
+{% endmacro %}
+{% block title %}Criteria{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>Screening criteria</h1>
+  <p>Score = weighted share of experience, education, required keywords and preferred keywords. Weights are relative, so they do not have to add up to 1.</p></div></div>
+
+<form class="card" method="post" action="{{ url_for('criteria_settings') }}" style="margin-bottom:1.1rem">
+  <h2>Decision thresholds</h2>
+  <div class="grid g3">
+    <div class="field"><label for="pt">Pass at or above</label><input id="pt" name="pass_threshold" type="number" min="0" max="100" step="1" value="{{ settings.pass_threshold }}"></div>
+    <div class="field"><label for="rt">Needs Review at or above</label><input id="rt" name="review_threshold" type="number" min="0" max="100" step="1" value="{{ settings.review_threshold }}"></div>
+    <div class="field"><label>&nbsp;</label><label class="check"><input type="checkbox" name="require_all_required_keywords" value="1" {{ 'checked' if settings.require_all_required_keywords == '1' }}> <span>Reject if any required keyword is missing</span></label></div>
+  </div>
+  <p class="hint">Hard requirements (minimum years and minimum education) always apply: a candidate who misses either is rejected whatever their score.</p>
+  <button class="btn primary sm" type="submit">Save thresholds</button>
+</form>
+
+<div class="stack">
+  {% for p in positions %}{{ position_form(p) }}{% endfor %}
+  {{ position_form(none, true) }}
+</div>
+{% endblock %}

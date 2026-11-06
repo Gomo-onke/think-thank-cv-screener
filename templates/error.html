@@ -1,0 +1,7 @@
+{% extends 'base.html' %}{% set no_chat = true %}
+{% block title %}{{ code }}{% endblock %}
+{% block main_class %}narrow{% endblock %}
+{% block content %}
+<div class="card center"><h1>{{ code }}</h1><p>{{ message }}</p>
+<a class="btn primary" href="{{ url_for('apply_form') }}">Back to the home page</a></div>
+{% endblock %}

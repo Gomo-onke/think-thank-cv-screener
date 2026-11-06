@@ -1,0 +1,14 @@
+{% macro score_bar(score) %}
+<div class="bar-score"><span class="track"><span class="fill" style="width: {{ [score, 100]|min }}%"></span></span><b>{{ '%.1f'|format(score) }}</b></div>
+{% endmacro %}
+
+{% macro rating_stars(value) %}{% if value is none %}<span class="muted">-</span>{% else %}<span class="stars" title="{{ value }} out of 5">{{ '★' * (value|round|int) }}{{ '☆' * (5 - (value|round|int)) }}</span> <span class="small">{{ value }}</span>{% endif %}{% endmacro %}
+
+{# One-click "Send shortlist email" button for eligible candidates. `next` returns the recruiter to the page they were on. #}
+{% macro shortlist_button(row, next_url) %}
+<form class="inline" method="post" action="{{ url_for('shortlist_email', cid=row.candidate_id) }}"
+      data-confirm="Send the shortlist email to {{ row.name }}? It congratulates them and invites them to a Google Meet interview within the next {{ interview_days }} business days.">
+  <input type="hidden" name="next" value="{{ next_url }}">
+  <button class="btn good sm" type="submit" data-busy="Sending…">{{ 'Resend shortlist email' if row.shortlist_email_sent_at else 'Send shortlist email' }}</button>
+</form>
+{% endmacro %}

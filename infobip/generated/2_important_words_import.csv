@@ -1,0 +1,17 @@
+agent;Human_Agent;human,person,recruiter,representative
+confirmation;Application_Received;received,acknowledgement,receipt
+timeline;Hiring_Timeline;duration,wait,how long,days
+shortlisted;Shortlisted_Next_Steps;shortlist,selected,passed
+interview;Interview_Preparation;meeting,google meet,video call
+documents;Offer_Documents;paperwork,certificates,id
+hours;Working_Hours;schedule,shifts,times
+remote;Remote_Work;hybrid,home,wfh,on-site
+salary;Salary_And_Pay;pay,stipend,wage,payment,payroll
+laptop;Equipment;computer,devices,tools,equipment
+onboarding;First_Week;induction,orientation,first day
+leave;Probation_And_Leave;holiday,vacation,benefits,sick
+internship;Intern_Departments;intern,interns,placement
+courses;Intern_Updates_Courses;course,training,learning
+hr;Contact_Hr;human resources,recruitment,recruiter
+vacancies;Open_Positions;jobs,positions,openings,roles,careers
+apply;How_To_Apply;application,submit,upload,cv,resume

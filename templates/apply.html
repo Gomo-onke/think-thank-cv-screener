@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% block title %}Apply{% endblock %}
+{% block main_class %}narrow{% endblock %}
+{% block content %}
+<section class="hero">
+  <h1>Join {{ org_name }}</h1>
+  <p>Tell us a little about yourself and attach your CV. It takes about five minutes. We reply to every applicant, and you will receive a confirmation email straight away.</p>
+  <div class="pill-row">
+    <span class="pill">Reply within {{ response_days }} business days</span>
+    <span class="pill">Interviews on Google Meet</span>
+    <span class="pill">Internships available</span>
+  </div>
+</section>
+
+<form method="post" action="{{ url_for('submit') }}" enctype="multipart/form-data" novalidate>
+
+  <section class="form-section">
+    <h2><span class="step">1</span> About you</h2>
+    <div class="grid g2">
+      <div class="field"><label for="name">Full name <span class="req">*</span></label>
+        <input id="name" name="name" type="text" maxlength="200" autocomplete="name" required></div>
+      <div class="field"><label for="email">Email address <span class="req">*</span></label>
+        <input id="email" name="email" type="email" maxlength="200" autocomplete="email" required></div>
+      <div class="field"><label for="phone">Mobile number <span class="req">*</span></label>
+        <input id="phone" name="phone" type="tel" maxlength="40" autocomplete="tel" placeholder="+27 82 123 4567" required>
+        <div class="hint">Include the country code, for example +27 82 123 4567.</div></div>
+      <div class="field"><label for="location">City / province <span class="req">*</span></label>
+        <input id="location" name="location" type="text" maxlength="200" autocomplete="address-level2" required></div>
+    </div>
+    <div class="field"><label for="work_authorisation">Are you legally allowed to work in South Africa? <span class="req">*</span></label>
+      <select id="work_authorisation" name="work_authorisation" required>
+        <option value="">Choose…</option>
+        {% for o in choices.WORK_AUTHORISATION %}<option>{{ o }}</option>{% endfor %}
+      </select></div>
+  </section>
+
+  <section class="form-section">
+    <h2><span class="step">2</span> The role</h2>
+    <div class="field"><label for="position">Position you are applying for <span class="req">*</span></label>
+      <select id="position" name="position" data-intern="{{ intern_position }}" required>
+        <option value="">Choose a position…</option>
+        {% for p in positions %}<option value="{{ p.name }}" {{ 'selected' if p.name == selected_position }}>{{ p.name }}</option>{% endfor %}
+      </select></div>
+    <div id="intern-fields" class="intern-box">
+      <div class="field" style="margin:0"><label for="preferred_department">Preferred department <span class="opt">(internships only)</span></label>
+        <select id="preferred_department" name="preferred_department">
+          <option value="">No preference</option>
+          {% for d, info in departments.items() %}<option value="{{ d }}">{{ d }} - {{ info.blurb }}</option>{% endfor %}
+        </select>
+        <div class="hint">Interns are placed in a department of {{ org_name }}. This is your preference, not a promise.</div></div>
+    </div>
+  </section>
+
+  <section class="form-section">
+    <h2><span class="step">3</span> Qualifications and experience</h2>
+    <div class="grid g2">
+      <div class="field"><label for="highest_qualification">Highest qualification <span class="req">*</span></label>
+        <select id="highest_qualification" name="highest_qualification" required>
+          <option value="">Choose…</option>
+          {% for o in choices.QUALIFICATIONS %}<option>{{ o }}</option>{% endfor %}
+        </select></div>
+      <div class="field"><label for="field_of_study">Field of study <span class="opt">(optional)</span></label>
+        <input id="field_of_study" name="field_of_study" type="text" maxlength="200" placeholder="e.g. Information Systems"></div>
+      <div class="field"><label for="current_title">Current job title <span class="opt">(optional)</span></label>
+        <input id="current_title" name="current_title" type="text" maxlength="200"></div>
+      <div class="field"><label for="current_employer">Current employer <span class="opt">(optional)</span></label>
+        <input id="current_employer" name="current_employer" type="text" maxlength="200"></div>
+      <div class="field"><label for="years_experience">Years of relevant experience <span class="opt">(optional)</span></label>
+        <input id="years_experience" name="years_experience" type="number" min="0" max="60" step="0.5" inputmode="decimal">
+        <div class="hint">Students and graduates can enter 0.</div></div>
+    </div>
+  </section>
+
+  <section class="form-section">
+    <h2><span class="step">4</span> Availability and preferences</h2>
+    <div class="grid g2">
+      <div class="field"><label for="notice_period">Notice period <span class="opt">(optional)</span></label>
+        <select id="notice_period" name="notice_period"><option value="">Choose…</option>
+          {% for o in choices.NOTICE_PERIODS %}<option>{{ o }}</option>{% endfor %}</select></div>
+      <div class="field"><label for="available_from">Available to start from <span class="opt">(optional)</span></label>
+        <input id="available_from" name="available_from" type="date"></div>
+      <div class="field"><label for="expected_salary">Expected salary or stipend <span class="opt">(optional)</span></label>
+        <input id="expected_salary" name="expected_salary" type="text" maxlength="60" placeholder="e.g. R25 000 per month"></div>
+      <div class="field"><label for="work_arrangement">Preferred way of working <span class="opt">(optional)</span></label>
+        <select id="work_arrangement" name="work_arrangement"><option value="">Choose…</option>
+          {% for o in choices.WORK_ARRANGEMENTS %}<option>{{ o }}</option>{% endfor %}</select></div>
+    </div>
+  </section>
+
+  <section class="form-section">
+    <h2><span class="step">5</span> Links and background</h2>
+    <div class="grid g2">
+      <div class="field"><label for="linkedin_url">LinkedIn profile <span class="opt">(optional)</span></label>
+        <input id="linkedin_url" name="linkedin_url" type="url" maxlength="300" placeholder="https://www.linkedin.com/in/…"></div>
+      <div class="field"><label for="portfolio_url">Portfolio or website <span class="opt">(optional)</span></label>
+        <input id="portfolio_url" name="portfolio_url" type="url" maxlength="300" placeholder="https://"></div>
+    </div>
+    <div class="field"><label for="referral_source">How did you hear about us? <span class="opt">(optional)</span></label>
+      <select id="referral_source" name="referral_source"><option value="">Choose…</option>
+        {% for o in choices.REFERRAL_SOURCES %}<option>{{ o }}</option>{% endfor %}</select></div>
+    <div class="field"><label for="cover_note">Anything else you would like us to know? <span class="opt">(optional)</span></label>
+      <textarea id="cover_note" name="cover_note" maxlength="2000" rows="4"></textarea></div>
+  </section>
+
+  <section class="form-section">
+    <h2><span class="step">6</span> Your CV <span class="req">*</span></h2>
+    <div class="tabs" role="tablist">
+      <button type="button" class="tab" role="tab" data-tab="upload" aria-selected="true">Upload a file</button>
+      <button type="button" class="tab" role="tab" data-tab="paste" aria-selected="false">Paste text</button>
+    </div>
+    <div data-panel="upload">
+      <label for="cv_file" class="sr">CV file</label>
+      <input id="cv_file" name="cv_file" type="file" accept=".pdf,.docx,.txt" data-max-mb="{{ choices.MAX_UPLOAD_MB }}">
+      <div class="hint">PDF, Word (.docx) or text. Maximum {{ choices.MAX_UPLOAD_MB }} MB. <span id="cv_file_info"></span></div>
+    </div>
+    <div data-panel="paste">
+      <label for="cv_text">Paste your CV</label>
+      <textarea id="cv_text" name="cv_text" rows="9" placeholder="Paste the full text of your CV here…"></textarea>
+      <div class="hint">Use this if you cannot upload a file. A file upload is used first if you give both.</div>
+    </div>
+  </section>
+
+  <section class="form-section">
+    <label class="check"><input type="checkbox" name="consent" value="yes" required>
+      <span>I confirm that the information I have given is accurate and I consent to {{ org_name }} processing my application and contacting me by email about it. <span class="req">*</span></span></label>
+  </section>
+
+  <div class="row">
+    <button class="btn primary lg" type="submit" data-busy="Sending…">Submit application</button>
+    <span class="muted small">Fields marked * are required.</span>
+  </div>
+</form>
+{% endblock %}

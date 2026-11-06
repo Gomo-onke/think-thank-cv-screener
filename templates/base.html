@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Careers{% endblock %} · {{ org_name }}</title>
+  {% if is_admin or noindex %}<meta name="robots" content="noindex, nofollow">{% endif %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header">
+  <div class="bar">
+    <a class="brand" href="{{ url_for('dashboard') if is_admin else url_for('apply_form') }}">
+      <span class="mark" aria-hidden="true">TT</span>
+      <span>{{ org_name }}<small>{{ 'Recruitment' if is_admin else 'Careers' }}</small></span>
+    </a>
+    <nav class="main" aria-label="Main">
+      {% set ep = request.endpoint or '' %}
+      {% if is_admin %}
+        <a href="{{ url_for('dashboard') }}" class="{{ 'active' if ep == 'dashboard' }}">Dashboard</a>
+        <a href="{{ url_for('candidates') }}" class="{{ 'active' if ep in ('candidates', 'candidate') }}">Candidates</a>
+        <a href="{{ url_for('interviews') }}" class="{{ 'active' if ep in ('interviews', 'interview') }}">Interviews</a>
+        <a href="{{ url_for('interns') }}" class="{{ 'active' if ep in ('interns', 'intern_detail') }}">Interns</a>
+        <a href="{{ url_for('requests_page') }}" class="{{ 'active' if ep == 'requests_page' }}">Requests{% if open_requests %} <span class="badge info">{{ open_requests }}</span>{% endif %}</a>
+        <a href="{{ url_for('faq') }}" class="{{ 'active' if ep == 'faq' }}">Chatbot</a>
+        <a href="{{ url_for('criteria') }}" class="{{ 'active' if ep == 'criteria' }}">Criteria</a>
+        <a href="{{ url_for('usage_page') }}" class="{{ 'active' if ep == 'usage_page' }}">Usage</a>
+        <a href="{{ url_for('integrations_page') }}" class="{{ 'active' if ep == 'integrations_page' }}">Integrations</a>
+        <a href="{{ url_for('export_xlsx') }}">Excel</a>
+        <a href="{{ url_for('apply_form') }}">Public form</a>
+        <form method="post" action="{{ url_for('logout') }}"><button class="linklike" type="submit">Log out</button></form>
+      {% else %}
+        <a href="{{ url_for('apply_form') }}" class="{{ 'active' if ep == 'apply_form' }}">Apply</a>
+        <a href="{{ url_for('login') }}" class="{{ 'active' if ep == 'login' }}">Recruiter login</a>
+      {% endif %}
+    </nav>
+  </div>
+</header>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}<div class="flashes" role="status">
+    {% for cat, msg in messages %}<div class="flash {{ cat }}">{{ msg }}</div>{% endfor %}
+  </div>{% endif %}
+{% endwith %}
+
+<main id="content" class="{% block main_class %}{% endblock %}">
+{% block content %}{% endblock %}
+</main>
+
+<footer class="site-footer">© {{ org_name }}. Your information is used only to process your application.</footer>
+
+{% if not is_admin and not no_chat %}{% include '_chat.html' %}{% endif %}
+<script src="{{ url_for('static', filename='app.js') }}" defer></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}Integrations{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>Integrations</h1><p>Every email this portal sends goes through your Zapier webhook. A failure here never stops an application from being saved.</p></div></div>
+
+<div class="split">
+  <div class="stack">
+    <div class="card"><h2>Configuration</h2>
+      <ul class="clean">{% for label, ok in checks %}<li>{{ label }} <span class="badge {{ 'pass' if ok else 'neutral' }}" style="float:right">{{ 'set' if ok else 'not set' }}</span></li>{% endfor %}</ul>
+      <p class="small muted" style="margin-top:.7rem">Set these in the <code>.env</code> file and restart the app. The webhook address is never shown here.</p>
+      <div class="note warn"><b>No Zapier webhook = no emails.</b> The portal hands each finished email to Zapier; your Zap (Gmail, Outlook or Email by Zapier) delivers it.
+        "Sent" on this site means <i>Zapier accepted it</i> - open the Zap's run history to confirm delivery.</div>
+    </div>
+    <div class="card"><h2>What your Zap receives</h2>
+      <p class="small">Every webhook has an <code>event</code> and a <code>send_email</code> field. Add a Zap Filter: <code>send_email</code> exactly matches <code>yes</code>, then a Send Email step using
+        <code>email_to</code>, <code>email_subject</code> and <code>email_body</code>.</p>
+      <div class="table-wrap"><table><thead><tr><th>event</th><th>Email goes to</th></tr></thead><tbody>
+        <tr><td><code>application_received</code></td><td>the candidate (received, 14 business days)</td></tr>
+        <tr><td><code>recruiter_notification</code></td><td>the recruitment lead (needs RECRUITMENT_LEAD_EMAIL)</td></tr>
+        <tr><td><code>human_escalation</code></td><td>the recruitment lead (a chat visitor asked for a person)</td></tr>
+        <tr><td><code>human_escalation_ack</code></td><td>the visitor (we passed your question to the team)</td></tr>
+        <tr><td><code>shortlist_email</code></td><td>the candidate (congratulations, interview within 5 business days, Google Meet)</td></tr>
+        <tr><td><code>intern_welcome_email</code></td><td>the intern (personal page link)</td></tr>
+        <tr><td><code>test_email</code></td><td>the address typed in the test box</td></tr>
+        <tr><td><code>selection_email</code></td><td>the candidate (stage set to Selected: congratulations and next steps)</td></tr>
+        <tr><td><code>rejection_email</code></td><td>the candidate (stage set to Not selected)</td></tr>
+        <tr><td><code>application_rescreened</code>, <code>stage_changed</code>, <code>intern_placed</code>, <code>test</code></td><td>no email (<code>send_email</code> = no) - data only</td></tr>
+      </tbody></table></div>
+    </div>
+    <div class="card"><h2>Excel report</h2>
+      <p>The Excel file is rewritten after every application, stage change, interview and intern placement, with sheets for Summary, Candidates, Interviews and Interns. It is saved on the server at <code>{{ excel_path }}</code> and can be downloaded here at any time.</p>
+      <a class="btn primary" href="{{ url_for('export_xlsx') }}">Download Excel report</a>
+    </div>
+    <div class="card"><div class="card-head"><h2>Activity log</h2><span class="muted small">Last {{ logs|length }}</span></div>
+      {% if logs %}<div class="table-wrap"><table><thead><tr><th>When</th><th>Service</th><th>Action</th><th>Result</th></tr></thead><tbody>
+        {% for l in logs %}<tr><td class="nowrap small">{{ l.created_at|ts }}</td><td>{{ l.service }}</td><td>{{ l.action }}</td>
+          <td>{% if l.success %}<span class="badge pass">ok</span>{% elif l.detail.startswith('skipped') %}<span class="badge neutral">skipped</span>{% else %}<span class="badge reject">failed</span>{% endif %}
+            <div class="small muted">{{ l.detail[:140] }}</div></td></tr>{% endfor %}</tbody></table></div>
+      {% else %}<p class="muted">Nothing yet.</p>{% endif %}
+    </div>
+  </div>
+  <aside class="stack">
+    <div class="card blue"><h2>Test Zapier</h2>
+      <p class="small">Sends a sample payload (<code>event: "test"</code>, no email) to your Catch Hook so Zapier can detect all the fields. Do this first.</p>
+      <form method="post" action="{{ url_for('test_zapier') }}"><button class="btn primary block" type="submit">Send test payload</button></form></div>
+    <div class="card blue"><h2>Test an email</h2>
+      <p class="small">Sends a real test email through your Zap, so you can confirm delivery.</p>
+      <form method="post" action="{{ url_for('test_email') }}">
+        <div class="field"><label for="email">Send the test email to</label><input id="email" name="email" type="email" placeholder="Defaults to the recruiter email"></div>
+        <button class="btn primary block" type="submit">Send test email</button></form></div>
+    {% if sheets_on %}<div class="card"><h2>Google Sheets</h2><p class="small">Screen new rows added to your Google Sheet.</p>
+      <form method="post" action="{{ url_for('sheets_import') }}"><button class="btn block" type="submit" data-busy="Importing…">Import new rows</button></form></div>{% endif %}
+  </aside>
+</div>
+{% endblock %}

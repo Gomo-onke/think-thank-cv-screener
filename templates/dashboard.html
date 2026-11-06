@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import score_bar, shortlist_button %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><h1>Recruitment dashboard</h1><p>Scores and decisions are visible to the recruitment team only.</p></div>
+  <div class="row"><a class="btn" href="{{ url_for('export_xlsx') }}">Download Excel report</a>
+    <a class="btn primary" href="{{ url_for('candidates') }}">View ranking</a></div>
+</div>
+
+<div class="grid g4" style="margin-bottom:1.1rem">
+  <div class="stat"><div class="n">{{ total }}</div><div class="l">Applications</div></div>
+  <div class="stat pass"><div class="n">{{ counts['Pass'] }}</div><div class="l">Pass ({{ shares['Pass'] }}%)</div></div>
+  <div class="stat review"><div class="n">{{ counts['Needs Review'] }}</div><div class="l">Needs review ({{ shares['Needs Review'] }}%)</div></div>
+  <div class="stat reject"><div class="n">{{ counts['Reject'] }}</div><div class="l">Reject ({{ shares['Reject'] }}%)</div></div>
+</div>
+
+<div class="card" style="margin-bottom:1.1rem">
+  <div class="card-head"><h2>Hiring pipeline</h2><span class="muted small">Average score {{ average }}</span></div>
+  <div class="stagebar">{% for s in stages %}<div class="s"><b>{{ pipeline.get(s, 0) }}</b><span>{{ s }}</span></div>{% endfor %}</div>
+</div>
+
+{% if failed %}<div class="note warn" style="margin-bottom:1.1rem"><b>{{ failed|length }} notification(s) failed recently.</b>
+  Applications were still saved. <a href="{{ url_for('integrations_page') }}">Check the Integrations page</a>.</div>{% endif %}
+
+<div class="split">
+  <div class="stack">
+    <div class="card">
+      <div class="card-head"><h2>Waiting for you</h2></div>
+      <h3>Passed - shortlist email not sent yet ({{ awaiting_email|length }})</h3>
+      {% if awaiting_email %}<div class="table-wrap"><table><thead><tr><th>Candidate</th><th>Position</th><th class="num">Score</th><th></th></tr></thead><tbody>
+        {% for r in awaiting_email[:8] %}<tr>
+          <td><a class="name" href="{{ url_for('candidate', cid=r.candidate_id) }}">{{ r.name }}</a></td><td>{{ r.position }}</td>
+          <td class="num">{{ '%.1f'|format(r.score) }}</td><td class="right">{{ shortlist_button(r, url_for('dashboard')) }}</td></tr>{% endfor %}
+      </tbody></table></div>{% if awaiting_email|length > 8 %}<p class="small muted" style="margin-top:.4rem">…and {{ awaiting_email|length - 8 }} more on the <a href="{{ url_for('candidates', status='Pass', stage='Applied') }}">candidates page</a>.</p>{% endif %}
+      {% else %}<p class="muted">Nobody is waiting. 🎉</p>{% endif %}
+
+      <h3 style="margin-top:1.1rem">Needs a recruiter's review ({{ needs_review|length }})</h3>
+      {% if needs_review %}<ul class="clean">{% for r in needs_review[:6] %}
+        <li><a class="name" href="{{ url_for('candidate', cid=r.candidate_id) }}">{{ r.name }}</a> <span class="muted">· {{ r.position }} · {{ '%.1f'|format(r.score) }}</span></li>{% endfor %}</ul>
+      {% else %}<p class="muted">Nothing to review.</p>{% endif %}
+
+      {% if awaiting_placement %}<h3 style="margin-top:1.1rem">Selected interns to place in a department ({{ awaiting_placement|length }})</h3>
+      <ul class="clean">{% for r in awaiting_placement %}<li><a class="name" href="{{ url_for('interns') }}">{{ r.name }}</a> <span class="muted">· prefers {{ r.preferred_department or 'no preference' }}</span></li>{% endfor %}</ul>{% endif %}
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h2>Top scores</h2><a href="{{ url_for('candidates') }}" class="small">See all</a></div>
+      {% if top %}<div class="table-wrap"><table><thead><tr><th>Candidate</th><th>Position</th><th>Score</th><th>Decision</th><th>Stage</th></tr></thead><tbody>
+        {% for r in top %}<tr><td><a class="name" href="{{ url_for('candidate', cid=r.candidate_id) }}">{{ r.name }}</a></td><td>{{ r.position }}</td>
+          <td>{{ score_bar(r.score) }}</td><td><span class="badge {{ r.status|badge }}">{{ r.status }}</span></td>
+          <td><span class="badge {{ r.stage|badge }}">{{ r.stage }}</span></td></tr>{% endfor %}</tbody></table></div>
+      {% else %}<div class="empty">No applications yet. Share the application link with candidates.</div>{% endif %}
+    </div>
+  </div>
+
+  <div class="stack">
+    <div class="card">
+      <div class="card-head"><h2>By position</h2></div>
+      {% if positions %}<ul class="clean">{% for p in positions %}
+        <li><b>{{ p.position }}</b><div class="small muted">{{ p.n }} applicant{{ '' if p.n == 1 else 's' }} · avg {{ p.avg }} · {{ p['Pass'] }} pass / {{ p['Needs Review'] }} review / {{ p['Reject'] }} reject</div></li>{% endfor %}</ul>
+      {% else %}<p class="muted">Nothing yet.</p>{% endif %}
+    </div>
+    <div class="card">
+      <div class="card-head"><h2>Latest applications</h2></div>
+      {% if recent %}<ul class="clean">{% for r in recent %}
+        <li><a class="name" href="{{ url_for('candidate', cid=r.candidate_id) }}">{{ r.name }}</a>
+          <span class="badge {{ r.status|badge }}" style="float:right">{{ r.status }}</span>
+          <div class="small muted">{{ r.position }} · {{ r.applied_at|ts }}</div></li>{% endfor %}</ul>
+      {% else %}<p class="muted">Nothing yet.</p>{% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

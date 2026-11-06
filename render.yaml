@@ -1,0 +1,41 @@
+# Render Blueprint: Dashboard -> New -> Blueprint -> pick your repo.
+# The database lives online in Supabase (set DATABASE_URL, see supabase/README.md), so no persistent disk is needed.
+# If you prefer the local SQLite file instead, leave DATABASE_URL empty and re-add a disk (paid plans only):
+#   disk: {name: data, mountPath: /var/data, sizeGB: 1}   and   DATABASE_PATH=/var/data/recruitment.db
+services:
+  - type: web
+    name: think-tank-recruitment-portal
+    runtime: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --timeout 60
+    healthCheckPath: /healthz
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: DATABASE_URL
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_KEY
+        sync: false
+      - key: TRACK_USAGE
+        value: "true"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: COOKIE_SECURE
+        value: "true"
+      - key: TRUST_PROXY
+        value: "true"
+      - key: PUBLIC_BASE_URL
+        sync: false
+      - key: ORGANISATION_NAME
+        value: Think Tank Software Solutions
+      - key: DEFAULT_COUNTRY_CODE
+        value: "27"
+      - key: RECRUITMENT_LEAD_EMAIL
+        sync: false
+      - key: ZAPIER_WEBHOOK_URL
+        sync: false

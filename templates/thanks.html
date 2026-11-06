@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Application received{% endblock %}
+{% block main_class %}narrow{% endblock %}
+{% block content %}
+<div class="card lift">
+  <span class="badge pass">Application received</span>
+  <h1 style="margin-top:.6rem">Thank you for applying</h1>
+  <p>We have received your application and our recruitment team will review it. A confirmation email has been sent to the address you gave us
+     (please also check your spam folder).</p>
+  <div class="note">
+    <b>What happens next?</b> If you do not hear from {{ org_name }} within the next <b>{{ response_days }} business days</b>,
+    please consider your application unsuccessful at this time. If you are shortlisted, we will email you to arrange a Google Meet interview.
+  </div>
+  <p style="margin-top:1rem">Have a question in the meantime? Use the chat button at the bottom right of this page.</p>
+  <a class="btn" href="{{ url_for('apply_form') }}">Back to the form</a>
+</div>
+{% endblock %}

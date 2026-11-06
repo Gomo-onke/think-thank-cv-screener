@@ -1,0 +1,18 @@
+{% extends 'base.html' %}{% set no_chat = true %}{% set noindex = true %}
+{% block title %}Recruiter login{% endblock %}
+{% block main_class %}tiny{% endblock %}
+{% block content %}
+<div class="card lift">
+  <h1>Recruiter login</h1>
+  <p class="muted">This area is for the recruitment team only. Enter the password once; you will stay signed in for 8 hours.</p>
+  <form method="post" action="{{ url_for('login') }}">
+    {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+    <div class="field">
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" autofocus required>
+    </div>
+    <button class="btn primary block" type="submit">Enter</button>
+  </form>
+  <p class="small muted" style="margin-top:1rem">Applicants: you do not need to log in. <a href="{{ url_for('apply_form') }}">Go to the application form</a>.</p>
+</div>
+{% endblock %}

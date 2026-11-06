@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}{{ intern.name }} · Intern{% endblock %}
+{% block content %}
+<p class="small"><a href="{{ url_for('interns') }}">← Back to interns</a></p>
+<div class="page-head"><div><h1>{{ intern.name }}</h1>
+  <p><span class="badge info">{{ intern.department }}</span> · {{ intern.email }}{% if intern.phone %} · {{ intern.phone }}{% endif %}</p></div>
+  <a class="btn" href="{{ url_for('candidate', cid=intern.candidate_id) }}">Application</a></div>
+
+<div class="split">
+  <div class="stack">
+    <div class="card">
+      <h2>Post an update for {{ intern.name.split(' ')[0] }}</h2>
+      <form method="post" action="{{ url_for('intern_update', iid=intern.id) }}">
+        <div class="field"><label for="message">Update <span class="req">*</span></label>
+          <textarea id="message" name="message" rows="4" maxlength="2000" required placeholder="e.g. Your first week plan is ready. Please meet your supervisor on Monday at 09:00."></textarea></div>
+        <div class="field"><label for="author">Posted by <span class="opt">(optional)</span></label><input id="author" name="author" type="text" maxlength="100"></div>
+        <button class="btn primary" type="submit">Post update</button>
+      </form>
+      {% if updates %}<h3 style="margin-top:1.2rem">Posted updates</h3><ul class="clean">{% for u in updates %}
+        <li><div class="small muted">{{ u.created_at|ts }}{% if u.author %} · {{ u.author }}{% endif %}</div><div style="white-space:pre-wrap">{{ u.message }}</div>
+          <form class="inline" method="post" action="{{ url_for('intern_update_delete', iid=intern.id, uid=u.id) }}" data-confirm="Delete this update?"><button class="btn danger sm" type="submit">Delete</button></form></li>{% endfor %}</ul>{% endif %}
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h2>Courses to learn</h2>
+        <form class="inline" method="post" action="{{ url_for('intern_suggest', iid=intern.id) }}"><button class="btn sm" type="submit">Add suggested {{ intern.department }} courses</button></form></div>
+      {% if courses %}<ul class="clean">{% for k in courses %}
+        <li><b>{% if k.link %}<a href="{{ k.link }}" target="_blank" rel="noopener noreferrer">{{ k.title }}</a>{% else %}{{ k.title }}{% endif %}</b>{% if k.provider %}<span class="muted"> · {{ k.provider }}</span>{% endif %}
+          {% if k.note %}<div class="small muted">{{ k.note }}</div>{% endif %}
+          <form class="inline" method="post" action="{{ url_for('intern_course_delete', iid=intern.id, cid=k.id) }}" data-confirm="Remove this course?"><button class="btn danger sm" type="submit">Remove</button></form></li>{% endfor %}</ul>
+      {% else %}<p class="muted">No courses yet.</p>{% endif %}
+      <details style="margin-top:1rem"><summary>Add your own course</summary>
+        <form method="post" action="{{ url_for('intern_course', iid=intern.id) }}">
+          <div class="grid g2"><div class="field"><label for="title">Course name <span class="req">*</span></label><input id="title" name="title" type="text" maxlength="200" required></div>
+            <div class="field"><label for="provider">Provider</label><input id="provider" name="provider" type="text" maxlength="120"></div></div>
+          <div class="field"><label for="link">Link</label><input id="link" name="link" type="url" maxlength="300" placeholder="https://"></div>
+          <div class="field"><label for="note">Why this course?</label><input id="note" name="note" type="text" maxlength="300"></div>
+          <button class="btn primary" type="submit">Add course</button></form></details>
+    </div>
+  </div>
+
+  <aside class="stack">
+    <div class="card blue lift">
+      <h2>Intern's personal page</h2>
+      <p class="small">Only people with this private link can see the updates and courses.</p>
+      <input id="hub" type="text" readonly value="{{ hub_link }}" aria-label="Personal link">
+      <div class="row" style="margin-top:.6rem"><button class="btn sm" type="button" data-copy="#hub">Copy link</button>
+        <a class="btn sm" href="{{ url_for('intern_hub', token=intern.token) }}" target="_blank" rel="noopener">Preview</a></div>
+      <form method="post" action="{{ url_for('intern_email_link', iid=intern.id) }}" style="margin-top:.8rem" data-confirm="Email the personal link to {{ intern.name }}?">
+        <button class="btn primary block" type="submit" data-busy="Sending…">Email the link to the intern</button></form>
+    </div>
+    <div class="card">
+      <h2>Placement</h2>
+      <form method="post" action="{{ url_for('intern_placement', iid=intern.id) }}">
+        <div class="field"><label for="department">Department</label><select id="department" name="department">
+          {% for d in departments %}<option {{ 'selected' if d == intern.department }}>{{ d }}</option>{% endfor %}</select></div>
+        <div class="field"><label for="supervisor">Supervisor</label><input id="supervisor" name="supervisor" type="text" maxlength="100" value="{{ intern.supervisor }}"></div>
+        <div class="field"><label for="start_date">Start date</label><input id="start_date" name="start_date" type="date" value="{{ intern.start_date }}"></div>
+        <button class="btn block" type="submit">Save placement</button></form>
+    </div>
+  </aside>
+</div>
+{% endblock %}

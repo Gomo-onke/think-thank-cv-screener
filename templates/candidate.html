@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import rating_stars %}
+{% block title %}{{ c.name }}{% endblock %}
+{% block content %}
+<p class="small"><a href="{{ url_for('candidates') }}">← Back to ranking</a></p>
+<div class="page-head">
+  <div>
+    <h1>{{ c.name }}</h1>
+    <p>{{ c.position }}{% if c.preferred_department %} · prefers {{ c.preferred_department }}{% endif %} · applied {{ c.created_at|ts }}</p>
+    <div class="row" style="margin-top:.5rem">
+      {% if latest %}<span class="badge {{ latest.status|badge }}">Auto decision: {{ latest.status }}</span>{% endif %}
+      <span class="badge {{ c.stage|badge }}">Stage: {{ c.stage }}</span>
+      {% if c.shortlist_email_sent_at %}<span class="badge pass">Shortlist email sent {{ c.shortlist_email_sent_at|ts }}</span>{% endif %}
+    </div>
+  </div>
+  {% if latest %}<div class="center"><div class="big-score">{{ '%.1f'|format(latest.score) }}</div><div class="small muted">out of 100</div></div>{% endif %}
+</div>
+
+<div class="split">
+  <div class="stack">
+    <div class="card">
+      <h2>Application details</h2>
+      <dl class="facts">
+        <dt>Email</dt><dd><a href="mailto:{{ c.email }}">{{ c.email }}</a></dd>
+        <dt>Mobile</dt><dd>{{ c.phone or '-' }}</dd>
+        <dt>Location</dt><dd>{{ c.location or '-' }}</dd>
+        <dt>Right to work</dt><dd>{{ c.work_authorisation or '-' }}</dd>
+        <dt>Highest qualification</dt><dd>{{ c.highest_qualification or '-' }}{% if c.field_of_study %} · {{ c.field_of_study }}{% endif %}</dd>
+        <dt>Current role</dt><dd>{{ c.current_title or '-' }}{% if c.current_employer %} at {{ c.current_employer }}{% endif %}</dd>
+        <dt>Years (declared)</dt><dd>{{ c.years_experience or '-' }}</dd>
+        <dt>Notice period</dt><dd>{{ c.notice_period or '-' }}</dd>
+        <dt>Available from</dt><dd>{{ c.available_from or '-' }}</dd>
+        <dt>Expected salary</dt><dd>{{ c.expected_salary or '-' }}</dd>
+        <dt>Work arrangement</dt><dd>{{ c.work_arrangement or '-' }}</dd>
+        <dt>LinkedIn</dt><dd>{% if c.linkedin_url %}<a href="{{ c.linkedin_url }}" target="_blank" rel="noopener noreferrer">{{ c.linkedin_url }}</a>{% else %}-{% endif %}</dd>
+        <dt>Portfolio</dt><dd>{% if c.portfolio_url %}<a href="{{ c.portfolio_url }}" target="_blank" rel="noopener noreferrer">{{ c.portfolio_url }}</a>{% else %}-{% endif %}</dd>
+        <dt>Heard about us via</dt><dd>{{ c.referral_source or '-' }}</dd>
+        <dt>CV file</dt><dd>{{ c.cv_filename or 'Pasted text' }} <span class="muted">({{ c.source }})</span></dd>
+        <dt>Consent given</dt><dd>{{ c.consent_at|ts if c.consent_at else '-' }}</dd>
+        {% if c.interview_when or c.meet_link %}<dt>Interview</dt><dd>{{ c.interview_when or 'Time to be confirmed' }}{% if c.meet_link %} · <a href="{{ c.meet_link }}" target="_blank" rel="noopener noreferrer">Google Meet</a>{% endif %}</dd>{% endif %}
+      </dl>
+      {% if c.cover_note %}<h3 style="margin-top:1rem">Note from the candidate</h3><p style="white-space:pre-wrap">{{ c.cover_note }}</p>{% endif %}
+    </div>
+
+    {% if latest %}
+    <div class="card">
+      <div class="card-head"><h2>Score breakdown</h2><span class="muted small">Screened {{ latest.created_at|ts }}</span></div>
+      {% set b = latest.breakdown %}
+      <div class="table-wrap"><table>
+        <thead><tr><th>Criterion</th><th>What we found</th><th class="num">Match</th><th class="num">Weight</th><th class="num">Points</th></tr></thead>
+        <tbody>
+          <tr><td>Experience</td><td>{{ b.years_found }} yrs found (min {{ b.min_years }})</td><td class="num">{{ b.sub_scores.experience|pct }}</td><td class="num">{{ b.weights.w_exp }}</td><td class="num">{{ b.weighted_points.experience }}</td></tr>
+          <tr><td>Education</td><td>{{ b.education_found }} (min {{ b.education_required }})</td><td class="num">{{ b.sub_scores.education|pct }}</td><td class="num">{{ b.weights.w_edu }}</td><td class="num">{{ b.weighted_points.education }}</td></tr>
+          <tr><td>Required keywords</td><td>{{ b.required_found|join(', ') or 'none found' }}{% if b.required_missing %}<div class="small" style="color:var(--red)">Missing: {{ b.required_missing|join(', ') }}</div>{% endif %}</td><td class="num">{{ b.sub_scores.required_keywords|pct }}</td><td class="num">{{ b.weights.w_req }}</td><td class="num">{{ b.weighted_points.required_keywords }}</td></tr>
+          <tr><td>Preferred keywords</td><td>{{ b.preferred_found|join(', ') or 'none found' }}</td><td class="num">{{ b.sub_scores.preferred_keywords|pct }}</td><td class="num">{{ b.weights.w_pref }}</td><td class="num">{{ b.weighted_points.preferred_keywords }}</td></tr>
+        </tbody></table></div>
+      {% if b.hard_failures %}<div class="note warn" style="margin-top:.8rem"><b>Hard requirement(s) not met:</b><ul class="bullets" style="margin:.3rem 0 0">{% for f in b.hard_failures %}<li>{{ f }}</li>{% endfor %}</ul></div>{% endif %}
+      <p class="small muted" style="margin-top:.7rem">{{ latest.notes }}</p>
+    </div>
+    {% endif %}
+
+    <div class="card">
+      <div class="card-head"><h2>Interviews and recruiter ranking</h2><a class="btn primary sm" href="{{ url_for('interview', cid=c.id) }}">{{ 'Add another interview note' if interviews else 'Record the interview' }}</a></div>
+      {% if interviews %}<ul class="clean">{% for i in interviews %}
+        <li><b>{{ i.interviewer }}</b> <span class="muted small">· {{ i.interview_date or (i.created_at|day) }}</span>
+          <span class="badge {{ i.recommendation|badge }}" style="float:right">Right person? {{ i.recommendation }}</span>
+          <div class="small">Skills {{ i.skills_rating }}/5 · Communication {{ i.communication_rating }}/5 · Culture {{ i.culture_rating }}/5 · <b>Overall {{ i.overall_rating }}/5</b></div>
+          {% if i.notes %}<div style="white-space:pre-wrap;margin-top:.3rem">{{ i.notes }}</div>{% endif %}</li>{% endfor %}</ul>
+      {% else %}<p class="muted">No interview recorded yet.</p>{% endif %}
+    </div>
+
+    <details><summary>CV text as read by the screener</summary><pre class="cv">{{ c.cv_text }}</pre></details>
+
+    <div class="card">
+      <h2>Notifications for this candidate</h2>
+      {% if logs %}<div class="table-wrap"><table><thead><tr><th>When</th><th>Service</th><th>Action</th><th>Result</th></tr></thead><tbody>
+        {% for l in logs %}<tr><td class="nowrap small">{{ l.created_at|ts }}</td><td>{{ l.service }}</td><td>{{ l.action }}</td>
+          <td>{% if l.success %}<span class="badge pass">sent</span>{% elif l.detail.startswith('skipped') %}<span class="badge neutral">skipped</span>{% else %}<span class="badge reject">failed</span>{% endif %}
+            <span class="small muted">{{ l.detail[:110] }}</span></td></tr>{% endfor %}</tbody></table></div>
+      {% else %}<p class="muted">Nothing logged.</p>{% endif %}
+    </div>
+  </div>
+
+  <aside class="stack">
+    <div class="card blue lift">
+      <h2>Shortlist email</h2>
+      {% if can_shortlist %}
+        <p class="small">Congratulates {{ c.name.split(' ')[0] }} on being shortlisted and invites them to a Google Meet video interview within the next {{ interview_days }} business days.</p>
+        <form method="post" action="{{ url_for('shortlist_email', cid=c.id) }}" data-confirm="Send the shortlist email to {{ c.name }}?">
+          <div class="field"><label for="interview_when">Interview date and time <span class="opt">(optional)</span></label>
+            <input id="interview_when" name="interview_when" type="text" maxlength="120" value="{{ c.interview_when }}" placeholder="e.g. Thursday 6 Nov, 10:00 SAST"></div>
+          <div class="field"><label for="meet_link">Google Meet link <span class="opt">(optional)</span></label>
+            <input id="meet_link" name="meet_link" type="url" maxlength="200" value="{{ c.meet_link }}" placeholder="https://meet.google.com/abc-defg-hij">
+            <div class="hint">Create one at meet.google.com → New meeting → Create a meeting for later.</div></div>
+          <button class="btn good block" type="submit" data-busy="Sending…">{{ 'Resend shortlist email' if c.shortlist_email_sent_at else 'Send shortlist email' }}</button>
+        </form>
+      {% else %}
+        <p class="small">This button is available for candidates who <b>passed</b>, or whose stage you set to <b>Shortlisted</b> below.</p>
+        <button class="btn block" disabled>Send shortlist email</button>
+      {% endif %}
+    </div>
+
+    <div class="card">
+      <h2>Hiring stage</h2>
+      <form method="post" action="{{ url_for('stage', cid=c.id) }}" data-stage-form>
+        <div class="field"><label for="stage">Move to</label>
+          <select id="stage" name="stage">{% for s in stages %}<option {{ 'selected' if s == c.stage }}{% if s in email_stages %} data-email="{{ 'selection' if s == 'Selected' else 'not selected' }}"{% endif %}>{{ s }}</option>{% endfor %}</select></div>
+        <label class="check small" id="stage-email-box" hidden>
+          <input type="checkbox" name="send_email" value="yes" checked>
+          <span>Email the candidate the result (<b id="stage-email-kind"></b> email)</span></label>
+        {% if outcome_email %}<p class="small muted" style="margin:.4rem 0">
+          {{ 'Selection' if outcome_email.action == 'selection_email' else 'Not-selected' }} email already sent {{ outcome_email.created_at|ts }}.</p>{% endif %}
+        <button class="btn block" type="submit">Update stage</button>
+      </form>
+      <div class="row" style="margin-top:.8rem">
+        <a class="btn sm" href="{{ url_for('interview', cid=c.id) }}">Interview &amp; ranking</a>
+        {% if c.position == intern_position and c.stage == 'Selected' %}
+          {% if intern %}<a class="btn sm" href="{{ url_for('intern_detail', iid=intern.id) }}">Intern page</a>
+          {% else %}<a class="btn sm" href="{{ url_for('interns') }}">Place in department</a>{% endif %}
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Re-screen</h2>
+      <p class="small muted">Run the screening again with the current criteria (for example after editing keywords). Also notifies Zapier.</p>
+      <form method="post" action="{{ url_for('rescreen', cid=c.id) }}">
+        <div class="field"><label for="rs_position">Position</label>
+          <select id="rs_position" name="position">{% for p in positions %}<option {{ 'selected' if p.name == c.position }}>{{ p.name }}</option>{% endfor %}</select></div>
+        <button class="btn block" type="submit" data-busy="Screening…">Re-screen</button>
+      </form>
+    </div>
+
+    {% if history|length > 1 %}<div class="card"><h2>Screening history</h2><ul class="clean">
+      {% for h in history %}<li>{{ h.created_at|ts }}<br><span class="badge {{ h.status|badge }}">{{ h.status }}</span> {{ '%.1f'|format(h.score) }} · {{ h.position }}</li>{% endfor %}</ul></div>{% endif %}
+  </aside>
+</div>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block title %}Website usage{% endblock %}
+{% block content %}
+{% set t = u.totals %}
+<div class="page-head">
+  <div><h1>Website usage</h1>
+    <p>How the website is being used, last {{ u.days }} days (since {{ u.since }}, UTC days). No names, IP addresses or CV text are recorded here.</p></div>
+  <div class="row">
+    {% for d in (7, 14, 30, 90) %}
+      <a class="btn {{ 'primary' if d == u.days }}" href="{{ url_for('usage_page', days=d) }}">{{ d }} days</a>
+    {% endfor %}
+  </div>
+</div>
+
+{% if not tracking %}<div class="note warn" style="margin-bottom:1.1rem"><b>Usage tracking is switched off</b> (TRACK_USAGE=0). Figures below only include earlier days.</div>{% endif %}
+
+<div class="note" style="margin-bottom:1.1rem">
+  <b>Where the data is stored:</b> {{ u.backend }}. Candidates saved: <b>{{ u.candidates_saved_total }}</b> in total, <b>{{ u.candidates_saved_period }}</b> in this period.
+</div>
+
+<div class="grid g4" style="margin-bottom:1.1rem">
+  <div class="stat"><div class="n">{{ u.visitors }}</div><div class="l">Visitors (per day, anonymous)</div></div>
+  <div class="stat"><div class="n">{{ t['page_view'] }}</div><div class="l">Page views</div></div>
+  <div class="stat pass"><div class="n">{{ t['application_submitted'] }}</div><div class="l">Applications sent</div></div>
+  <div class="stat review"><div class="n">{{ t['chat_message'] + t['whatsapp_message'] + t['api_bot_message'] }}</div><div class="l">Chatbot messages</div></div>
+</div>
+
+<div class="split">
+  <div class="stack">
+    <div class="card">
+      <div class="card-head"><h2>Day by day</h2><span class="muted small">bar = page views</span></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Day</th><th>Views</th><th>Visitors</th><th>Applications</th><th>Web chat</th><th>WhatsApp</th><th style="width:30%"></th></tr></thead>
+        <tbody>
+        {% for r in u.series|reverse %}
+          <tr><td>{{ r.day }}</td><td>{{ r.views }}</td><td>{{ r.visitors }}</td><td>{{ r.applications }}</td><td>{{ r.chats }}</td><td>{{ r.whatsapp }}</td>
+            <td><span class="bar-score"><span class="track"><span class="fill" style="width:{{ r.bar }}%"></span></span></span></td></tr>
+        {% endfor %}
+        </tbody></table></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h2>Most visited pages</h2></div>
+      {% if u.pages %}<div class="table-wrap"><table><thead><tr><th>Page</th><th>Views</th></tr></thead><tbody>
+        {% for p in u.pages %}<tr><td>{{ p.name }}</td><td>{{ p.n }}</td></tr>{% endfor %}</tbody></table></div>
+      {% else %}<p class="muted">No page views recorded yet.</p>{% endif %}
+    </div>
+  </div>
+
+  <div class="stack">
+    <div class="card">
+      <div class="card-head"><h2>From visit to application</h2></div>
+      <p>{{ u.form_visitors }} visitor-days opened the application page; {{ u.applicants }} sent an application.
+        {% if u.conversion is not none %}<b>{{ u.conversion }}%</b> conversion.{% endif %}</p>
+      <p class="muted small">Rejected submissions (form errors): {{ t['application_rejected'] }}</p>
+    </div>
+    <div class="card">
+      <div class="card-head"><h2>Chatbot</h2></div>
+      <p>Website chat: {{ t['chat_opened'] }} opened, {{ t['chat_message'] }} questions
+        ({{ u.chat.matched }} answered, {{ u.chat.unmatched }} not understood), {{ t['chat_handoff'] }} sent to a recruiter.</p>
+      <p>WhatsApp messages: {{ t['whatsapp_message'] }}. Other chat channels (API): {{ t['api_bot_message'] }}.</p>
+    </div>
+    {% for title, rows in (('Devices', u.devices), ('Browsers', u.browsers), ('Came from', u.referrers)) %}
+    <div class="card">
+      <div class="card-head"><h2>{{ title }}</h2></div>
+      {% if rows %}<div class="table-wrap"><table><tbody>{% for r in rows %}<tr><td>{{ r.name }}</td><td>{{ r.n }}</td></tr>{% endfor %}</tbody></table></div>
+      {% else %}<p class="muted">Nothing yet.</p>{% endif %}
+    </div>
+    {% endfor %}
+    <div class="card">
+      <div class="card-head"><h2>Staff activity</h2></div>
+      <p class="small">Admin page views: {{ t['admin_view'] }} · Sign-ins: {{ t['login_success'] }} · Failed sign-ins: {{ t['login_failed'] }} · Excel exports: {{ t['export_excel'] }}</p>
+      <p class="muted small">Automated traffic (search engines, uptime checks) is counted separately: {{ u.bots }} requests, left out of the figures above.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

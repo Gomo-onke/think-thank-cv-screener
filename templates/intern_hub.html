@@ -1,0 +1,36 @@
+{% extends 'base.html' %}{% set no_chat = false %}{% set noindex = true %}
+{% block title %}Your internship{% endblock %}
+{% block main_class %}narrow{% endblock %}
+{% block content %}
+<section class="hero">
+  <span class="badge info">Intern</span>
+  <h1 style="margin-top:.5rem">Welcome, {{ intern.name.split(' ')[0] }}</h1>
+  <p>You are part of the <b>{{ intern.department }}</b> team at {{ org_name }}. {{ dept.blurb }}</p>
+  <dl class="facts">
+    <dt>Department</dt><dd>{{ intern.department }}</dd>
+    {% if intern.supervisor %}<dt>Your supervisor</dt><dd>{{ intern.supervisor }}</dd>{% endif %}
+    {% if intern.start_date %}<dt>Start date</dt><dd>{{ intern.start_date|day }}</dd>{% endif %}
+  </dl>
+</section>
+
+<div class="stack">
+  <div class="card">
+    <div class="card-head"><h2>Updates for you</h2></div>
+    {% if updates %}
+    <ul class="clean timeline">{% for u in updates %}
+      <li><div class="small muted">{{ u.created_at|ts }}{% if u.author %} · {{ u.author }}{% endif %}</div>
+          <div style="white-space:pre-wrap">{{ u.message }}</div></li>{% endfor %}</ul>
+    {% else %}<p class="muted">No updates yet. Check back soon - your team will post news here.</p>{% endif %}
+  </div>
+
+  <div class="card">
+    <div class="card-head"><h2>Courses to grow in your role</h2></div>
+    {% if courses %}
+    <ul class="clean">{% for k in courses %}
+      <li><b>{% if k.link %}<a href="{{ k.link }}" target="_blank" rel="noopener noreferrer">{{ k.title }}</a>{% else %}{{ k.title }}{% endif %}</b>
+          {% if k.provider %}<span class="muted"> · {{ k.provider }}</span>{% endif %}
+          {% if k.note %}<div class="small muted">{{ k.note }}</div>{% endif %}</li>{% endfor %}</ul>
+    {% else %}<p class="muted">Your supervisor will add recommended courses here.</p>{% endif %}
+  </div>
+</div>
+{% endblock %}

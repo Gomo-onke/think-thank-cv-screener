@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Interns{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>Interns &amp; departments</h1>
+  <p>Place selected interns in a {{ org_name }} department, then post updates and recommend courses on their personal page.</p></div></div>
+
+<div class="card" style="margin-bottom:1.1rem">
+  <div class="card-head"><h2>Selected - waiting for a department ({{ awaiting|length }})</h2></div>
+  {% if awaiting %}<div class="table-wrap"><table><thead><tr><th>Intern</th><th>Preferred department</th><th>Place in department</th></tr></thead><tbody>
+    {% for r in awaiting %}<tr>
+      <td><a class="name" href="{{ url_for('candidate', cid=r.candidate_id) }}">{{ r.name }}</a><div class="small muted">{{ r.email }}</div></td>
+      <td>{{ r.preferred_department or 'No preference' }}</td>
+      <td><form method="post" action="{{ url_for('place_intern', cid=r.candidate_id) }}" class="row">
+        <select name="department" aria-label="Department for {{ r.name }}" required style="width:auto;min-width:200px">
+          {% for d in departments %}<option {{ 'selected' if d == r.preferred_department }}>{{ d }}</option>{% endfor %}</select>
+        <input name="supervisor" type="text" placeholder="Supervisor" maxlength="100" aria-label="Supervisor" style="width:150px">
+        <input name="start_date" type="date" aria-label="Start date" style="width:auto">
+        <button class="btn primary sm" type="submit">Place</button></form></td></tr>{% endfor %}
+  </tbody></table></div>
+  {% else %}<p class="muted">No selected interns are waiting. Mark an Intern candidate as <b>Selected</b> on their interview page to place them here.</p>{% endif %}
+</div>
+
+<div class="card" style="margin-bottom:1.1rem">
+  <div class="card-head"><h2>Placed interns ({{ placed|length }})</h2></div>
+  {% if placed %}<div class="table-wrap"><table><thead><tr><th>Intern</th><th>Department</th><th>Supervisor</th><th>Starts</th><th class="num">Updates</th><th class="num">Courses</th><th></th></tr></thead><tbody>
+    {% for n in placed %}<tr><td><a class="name" href="{{ url_for('intern_detail', iid=n.id) }}">{{ n.name }}</a></td>
+      <td><span class="badge info">{{ n.department }}</span></td><td>{{ n.supervisor or '-' }}</td><td class="small">{{ n.start_date|day or '-' }}</td>
+      <td class="num">{{ n.update_count }}</td><td class="num">{{ n.course_count }}</td>
+      <td class="right"><a class="btn sm" href="{{ url_for('intern_detail', iid=n.id) }}">Manage</a></td></tr>{% endfor %}
+  </tbody></table></div>
+  {% else %}<p class="muted">Nobody placed yet.</p>{% endif %}
+</div>
+
+{% if others %}<details><summary>Other intern applicants ({{ others|length }}) - not yet selected</summary>
+  <ul class="clean">{% for r in others %}<li><a class="name" href="{{ url_for('candidate', cid=r.candidate_id) }}">{{ r.name }}</a>
+    <span class="badge {{ r.stage|badge }}">{{ r.stage }}</span> <span class="muted small">· score {{ '%.1f'|format(r.score) }} · prefers {{ r.preferred_department or 'no preference' }}</span></li>{% endfor %}</ul></details>{% endif %}
+
+<div class="grid g3" style="margin-top:1.25rem">
+  {% for d, info in departments.items() %}<div class="card"><h3>{{ d }}</h3><p class="small muted">{{ info.blurb }}</p>
+    <b class="small">{{ placed|selectattr('department', 'equalto', d)|list|length }} intern(s) placed</b></div>{% endfor %}
+</div>
+{% endblock %}
