@@ -44,7 +44,7 @@ Run the tests: `python -m unittest discover -s tests -v`
 ## 2. How to put everything together
 
 1. **Run it** (above) and submit a test application at `/`. You land on the thank-you page.
-2. **Log in** at `/admin/login` with the password (default `0000`). Open **Candidates** - your test applicant is scored.
+2. **Log in** at `/admin/login` Open **Candidates** - your test applicant is scored.
 3. **Change the password**: set `ADMIN_PASSWORD=` in `.env` and restart.
 4. **Zapier = every email.** The portal never talks to an email provider itself. It hands each finished email to your Zapier webhook and your Zap delivers it. Set it up in section 2a below, then put the webhook address in `.env` as `ZAPIER_WEBHOOK_URL=` and restart.
    *No webhook = no emails.* The portal says so plainly instead of pretending ("NOT sent: ZAPIER_WEBHOOK_URL not set").
