@@ -109,12 +109,10 @@ Do **not** use a free host with a temporary disk - the database and Excel file w
 
 ## 6. Security and privacy notes
 
-* `0000` can be guessed in seconds. The login locks out after 5 wrong tries (5 minutes), but **change it** before real use.
+*  The login locks out after 5 wrong tries (5 minutes)
 * The Excel file and database contain personal information (names, phones, CVs). Treat them accordingly (POPIA / GDPR): the form records consent, and you should delete applications you no longer need.
 * Applicant text is always escaped (no HTML injection) and Excel cells are stored as text (no formula injection).
 * The chatbot is rule-based: nothing is sent to an AI service.
-* WhatsApp chats pass through Infobip. The portal keeps a person's WhatsApp number only when they ask for a recruiter (in Admin > Requests), plus a short-lived conversation state; ordinary questions are not stored with their number. The chat bubble and the WhatsApp greeting ask people not to send ID numbers or passwords.
-* The chat endpoints for Infobip refuse every call unless `INFOBIP_WEBHOOK_SECRET` / `BOT_API_KEY` is set and matches, so nobody else can make your Infobip account send WhatsApp messages.
 
 ## 7. Troubleshooting
 
