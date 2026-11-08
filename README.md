@@ -13,13 +13,6 @@ Applicants are **never shown their score or decision** - only "application recei
 
 ---
 
-## Chatbot on your website and WhatsApp (Infobip)
-
-The same FAQ chatbot can be shown on any website with one line of HTML, answer on WhatsApp through Infobip, or be
-called from a chatbot built in Infobip Answers. See **`infobip/START_HERE.md`** (import the FAQ and company information into Infobip, connect it to your website) and **`infobip/SETUP.md`** (WhatsApp). Emails still go only
-through Zapier; Infobip is used only for the WhatsApp chat channel. New `.env` settings: `INFOBIP_WEBHOOK_SECRET`,
-`INFOBIP_BASE_URL`, `INFOBIP_API_KEY`, `INFOBIP_WHATSAPP_SENDER`, `BOT_API_KEY`, `EMBED_ALLOWED_ORIGINS`.
-
 ## Online database and usage tracking (Supabase)
 
 Set `DATABASE_URL` and every candidate, result and chat request is saved in an online Supabase database; **Admin > Usage** shows how the website is used (no IP addresses or names stored). Steps, security and the data-migration tool: [`supabase/README.md`](supabase/README.md).
