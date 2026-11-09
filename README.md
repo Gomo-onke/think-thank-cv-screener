@@ -162,7 +162,7 @@ Copy `.env.example` to `.env` (same folder as `app.py`). **Never commit `.env`**
 
 | Setting | What it does | Default / example |
 |---|---|---|
-| `ADMIN_PASSWORD` | Recruiter password | `0000` - **change it** |
+| `ADMIN_PASSWORD` | Recruiter password | 
 | `SECRET_KEY` | Signs login cookies. Blank = generated once and stored in the database | Optional |
 | `COOKIE_SECURE` | `true` once the site is served over HTTPS | `false` locally, `true` online |
 | `TRUST_PROXY` | `true` behind nginx / Render / Railway so real IPs and https are detected | `false` locally |
@@ -408,10 +408,8 @@ schema.sql          SQLite schema (reference)
 | Dashboard, Excel report, usage page | **Built and tested** |
 | Email through Zapier | **Working** (confirmed by the team; end-to-end test used a stand-in) |
 | Online database (Supabase) | **Partly working.** Tested on a local Postgres 16 and a simulated web API. **Not yet confirmed against the team's own Supabase project.** |
-| Public deployment | **Still to do.** Runs on a local server; publish with Render, Railway or your own server |
-| SMS messages | **Not built** (removed from scope by a change request) |
-| Interview reminder 24 hours before | **Not built** (roadmap) |
-| WhatsApp / Infobip chat channel | **Not connected.** The code and tests exist, but the team could not connect the Infobip account in time, so it is not part of the working solution. Leave the Infobip settings blank. |
+| Public deployment |publish with Render, Railway or your own server |
+| WhatsApp / Infobip chat channel | **Not connected.** The code and tests exist, but the team could not connect the Infobip account in time, so it is not part of the working solution. 
 | Individual recruiter accounts, audit log, candidate deletion and retention rules | **Roadmap** (the portal currently uses one shared recruiter password) |
 
 **Suggested next steps for Think Tank:** (1) publish the portal at a Think Tank address; (2) run `tools/check_db_connection.py` against a real Supabase project and confirm; (3) change the recruiter password and review the chatbot answers and scoring criteria; (4) add individual recruiter accounts and a privacy notice before using real applicant data; (5) add SMS and the 24-hour reminder if wanted ;(6) Add Infobip to the application for the chatbot to be agentic 
