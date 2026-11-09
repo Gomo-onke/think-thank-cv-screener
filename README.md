@@ -2,7 +2,7 @@
 
 A web portal that takes a job applicant from the first click to the first day: they **apply** with a CV, the system **screens and ranks** the CV, recruiters **interview and decide**, every candidate receives a **clear email at each stage**, and selected interns get a private **onboarding page**. A built-in **FAQ chatbot**, a **dashboard**, an **Excel report** and privacy-first **usage statistics** run alongside.
 
-Built by **Group 12** for **Think Tank Software Solutions** (IFS325 / IFS353 project). Recruiters make every hiring decision; the system prepares the information and sends the emails.
+Built by **Group 12** for **Think Tank Software Solutions** (IFS325 project). Recruiters make every hiring decision; the system prepares the information and sends the emails.
 
 > **Status in one glance:** the full journey works end to end and is covered by 180 automated tests (0 failures). Still to do: publish the portal at a public address and confirm the online database against a real Supabase project. See [Project status](#project-status-what-is-done-and-what-is-not).
 
